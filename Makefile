@@ -1,8 +1,7 @@
 ORG_NAME := um
 PROJECT_NAME := docker-r
 OUTPUTDIR := target
-BINARY := $(OUTPUTDIR)/$(PROJECT_NAME)
-USER := thebigcorporation
+USER ?= `whoami`
 IMAGE_REPOSITORY := $(USER)/$(ORG_NAME)/$(PROJECT_NAME):latest
 
 # Use this for debugging builds. Turn off for a more slick build log
