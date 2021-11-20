@@ -1,7 +1,10 @@
 ORG_NAME := um
 PROJECT_NAME := docker-r
-OUTPUTDIR := target
+
 USER ?= `whoami`
+USERID := `id -u`
+USERGID := `id -g`
+
 IMAGE_REPOSITORY := $(USER)/$(ORG_NAME)/$(PROJECT_NAME):latest
 
 # Use this for debugging builds. Turn off for a more slick build log
@@ -15,10 +18,12 @@ tests: test
 test:
 
 clean:
-	@rm -rf $(OUTPUTDIR)
 
 docker:
 	@docker build -t $(IMAGE_REPOSITORY) \
+		--build-arg USERNAME=$(USER) \
+		--build-arg USERID=$(USERID) \
+		--build-arg USERGID=$(USERGID) \
 		$(DOCKER_BUILD_ARGS) \
 	  .
 
