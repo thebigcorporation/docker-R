@@ -1,32 +1,35 @@
 ORG_NAME := hihg-um
-PROJECT_NAME := docker-r
+PROJECT_NAME ?= r
+OS_BASE ?= ubuntu
+OS_VER ?= 22.04
 
-USER ?= `whoami`
 USERID := `id -u`
 USERGID := `id -g`
 
-IMAGE_REPOSITORY := $(USER)/$(ORG_NAME)/$(PROJECT_NAME):latest
-
+IMAGE_REPOSITORY :=
+IMAGE := $(USER)/$(PROJECT_NAME):latest
 # Use this for debugging builds. Turn off for a more slick build log
 DOCKER_BUILD_ARGS := --progress=plain
 
 .PHONY: all build clean test tests
 
-all: clean docker test
+all: docker test
 tests: test
 
 test:
 
 clean:
+	@docker rmi $(IMAGE)
 
 docker:
-	@docker build -t $(IMAGE_REPOSITORY) \
+
+	@docker build -t $(ORG_NAME)/$(USER)/$@ \
+		$(DOCKER_BUILD_ARGS) \
+		--build-arg BASE_IMAGE=$(OS_BASE):$(OS_VER) \
 		--build-arg USERNAME=$(USER) \
 		--build-arg USERID=$(USERID) \
 		--build-arg USERGID=$(USERGID) \
-		$(DOCKER_BUILD_ARGS) \
-	  .
+		.
 
 release:
-	docker push $(IMAGE_REPOSITORY)
-
+	docker push $(IMAGE_REPOSITORY)/$(IMAGE)
