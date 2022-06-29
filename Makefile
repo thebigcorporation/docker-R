@@ -23,7 +23,7 @@ clean:
 
 docker:
 
-	@docker build -t $(ORG_NAME)/$(USER)/$@ \
+	@docker build -t $(ORG_NAME)/$(IMAGE) \
 		$(DOCKER_BUILD_ARGS) \
 		--build-arg BASE_IMAGE=$(OS_BASE):$(OS_VER) \
 		--build-arg USERNAME=$(USER) \
