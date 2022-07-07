@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-2.0
+
 ORG_NAME := hihg-um
 PROJECT_NAME ?= r
 OS_BASE ?= ubuntu
