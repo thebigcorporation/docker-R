@@ -5,8 +5,8 @@ PROJECT_NAME ?= r
 OS_BASE ?= ubuntu
 OS_VER ?= 22.04
 
-USERID := `id -u`
-USERGID := `id -g`
+USERID ?= `id -u`
+USERGID ?= `id -g`
 
 IMAGE_REPOSITORY :=
 IMAGE := $(USER)/$(PROJECT_NAME):latest
