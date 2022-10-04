@@ -15,8 +15,9 @@ ENV USERNAME=${USERNAME:-nouser} \
     USERGID=${USERGID:-nogroup}
 
 RUN apt -y update -qq && apt -y upgrade && DEBIAN_FRONTEND=noninteractive \
-	apt -y install bzip2 curl wget \
-	r-base r-cran-genetics r-cran-ggplot2 r-cran-tidyverse
+	apt -y install apt-utils bzip2 curl wget \
+	r-base r-cran-genetics r-cran-ggplot2 r-cran-qqman \
+	r-cran-tidyverse
 
 # match the building user. This will allow output only where the building
 # user has write permissions
