@@ -16,7 +16,7 @@ ENV USERNAME=${USERNAME:-nouser} \
 
 RUN apt -y update -qq && apt -y upgrade && DEBIAN_FRONTEND=noninteractive \
 	apt -y install apt-utils bzip2 curl wget \
-	r-base r-cran-genetics r-cran-ggplot2 r-cran-qqman \
+	r-base r-cran-genetics r-cran-ggplot2 r-cran-optparse r-cran-qqman \
 	r-cran-tidyverse
 
 # match the building user. This will allow output only where the building
