@@ -24,4 +24,4 @@ RUN apt -y update -qq && apt -y upgrade && DEBIAN_FRONTEND=noninteractive \
 RUN useradd -m -u $USERID -g $USERGID $USERNAME
 USER $USERNAME
 
-ENTRYPOINT [ "R" ]
+ENTRYPOINT [ "Rscript" ]
