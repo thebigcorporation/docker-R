@@ -7,6 +7,7 @@ FROM $BASE_IMAGE as base
 # without these, the container will fail-safe and be unable to write output
 ARG USERNAME
 ARG USERID
+ARG USERGNAME
 ARG USERGID
 
 # Put the user name and ID into the ENV, so the runtime inherits them
@@ -16,12 +17,16 @@ ENV USERNAME=${USERNAME:-nouser} \
 
 RUN apt -y update -qq && apt -y upgrade && DEBIAN_FRONTEND=noninteractive \
 	apt -y install apt-utils bzip2 curl wget \
-	r-base r-cran-genetics r-cran-ggplot2 r-cran-optparse r-cran-qqman \
+	r-base r-bioc-snpstats r-cran-genetics r-cran-ggplot2 \
+	r-cran-optparse r-cran-qqman \
 	r-cran-tidyverse
 
-# match the building user. This will allow output only where the building
+# Set the user and group. This will allow output only where the
 # user has write permissions
-RUN useradd -m -u $USERID -g $USERGID $USERNAME
+RUN groupadd -g $USERGID $USERGNAME && \
+	useradd -m -u $USERID -g $USERGID $USERNAME && \
+	adduser $USERNAME $USERGNAME
+
 USER $USERNAME
 
 ENTRYPOINT [ "Rscript" ]
