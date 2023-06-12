@@ -17,7 +17,7 @@ ENV USERNAME=${USERNAME:-nouser} \
 
 RUN apt -y update -qq && apt -y upgrade && DEBIAN_FRONTEND=noninteractive \
 	apt -y install apt-utils bzip2 curl wget \
-	r-base r-bioc-snpstats r-cran-genetics r-cran-ggplot2 \
+	r-base r-bioc-snpstats r-cran-genetics \
 	r-cran-optparse r-cran-qqman \
 	r-cran-tidyverse
 

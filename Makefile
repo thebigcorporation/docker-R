@@ -5,33 +5,39 @@ PROJECT_NAME ?= r
 OS_BASE ?= ubuntu
 OS_VER ?= 22.04
 
-USER ?= $$(USER)
+USER ?= `whoami`
 USERID ?= `id -u`
-USERGNAME ?= "adgc"
-USERGID ?= 5000
+USERGNAME ?= ad
+USERGID ?= 1533
 
 IMAGE_REPOSITORY :=
-DOCKER_IMAGE_BASE := $(ORG_NAME)/$(USER)
-DOCKER_TAG := latest
+IMAGE := $(ORG_NAME)/$(USER)/$(PROJECT_NAME):latest
+
+GIT_HASH ?= $(shell git log --format="%h" -n 1)
 
 # Use this for debugging builds. Turn off for a more slick build log
 DOCKER_BUILD_ARGS := --progress=plain
 
-SIF_IMAGES := $(TOOLS:=\:$(DOCKER_TAG).svf)
-DOCKER_IMAGES := $(TOOLS:=\:$(DOCKER_TAG))
+.PHONY: all build clean docker test test_docker test_apptainer
 
-TOOLS := r
-.PHONY: all build clean test tests
+all: docker $(PROJECT_NAME).sif test
 
-all:
-	@echo $(SIF_IMAGES) $(DOCKER_IMAGES)
+test: test_docker test_apptainer
+
+test_docker:
+	@echo "Testing docker image: $(IMAGE)"
+	@docker run -it -v /mnt:/mnt $(IMAGE) --version
+
+test_apptainer: $(PROJECT_NAME).sif
+	@echo "Testing apptainer image: $(PROJECT_NAME).sif"
+	@apptainer run $(PROJECT_NAME).sif --version
 
 clean:
-	@docker rmi $(DOCKER_IMAGES)
-	@rm -f $(SVF_IMAGES)
+	@docker rmi -f --no-prune $(IMAGE)
+	@rm -f $(PROJECT_NAME).sif
 
-$(TOOLS):
-	@docker build -t $(DOCKER_IMAGE_BASE)/$@:$(DOCKER_TAG) \
+docker:
+	@docker build -t $(IMAGE) \
 		$(DOCKER_BUILD_ARGS) \
 		--build-arg BASE_IMAGE=$(OS_BASE):$(OS_VER) \
 		--build-arg USERNAME=$(USER) \
@@ -40,9 +46,8 @@ $(TOOLS):
 		--build-arg USERGID=$(USERGID) \
 		.
 
-singularity_test: $(SIF_IMAGES)
-	@echo "Testing singularity image: $@"
-	@singularity run $(ORG_NAME)/$@ -v
+$(PROJECT_NAME).sif:
+	@apptainer build $(PROJECT_NAME).sif docker-daemon:$(IMAGE)
 
-release: $(DOCKER_IMAGES)
-	@docker push $(IMAGE_REPOSITORY)/$(ORG_NAME)/$(USER)/$@
+release:
+	docker push $(IMAGE_REPOSITORY)/$(IMAGE)
