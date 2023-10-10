@@ -4,13 +4,8 @@ ORG_NAME := hihg-um
 OS_BASE ?= ubuntu
 OS_VER ?= 22.04
 
-USER ?= `whoami`
-USERID ?= `id -u`
-USERGNAME ?= ad
-USERGID ?= 1533
-
 IMAGE_REPOSITORY ?=
-DOCKER_IMAGE_BASE := $(ORG_NAME)/$(USER)
+DOCKER_IMAGE_BASE := $(ORG_NAME)
 
 GIT_REV := $(shell git describe --tags --dirty)
 DOCKER_TAG ?= $(GIT_REV)
@@ -55,10 +50,6 @@ $(TOOLS):
 		-t $(DOCKER_IMAGE_BASE)/$@:$(DOCKER_TAG) \
 		$(DOCKER_BUILD_ARGS) \
 		--build-arg BASE_IMAGE=$(OS_BASE):$(OS_VER) \
-		--build-arg USERNAME=$(USER) \
-		--build-arg USERID=$(USERID) \
-		--build-arg USERGNAME=$(USERGNAME) \
-		--build-arg USERGID=$(USERGID) \
 		.
 
 docker_test:
