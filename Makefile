@@ -12,7 +12,7 @@ DOCKER_TAG ?= $(GIT_REV)
 
 DOCKER_BUILD_ARGS :=
 
-TOOLS := genesis mergeomics prosper saige
+TOOLS := genesis mergeomics prosper saige seqmeta
 DOCKER_BASE= r-base\:$(DOCKER_TAG)
 DOCKER_IMAGES := $(TOOLS:=\:$(DOCKER_TAG))
 SIF_IMAGES := $(TOOLS:=\:$(DOCKER_TAG).sif)

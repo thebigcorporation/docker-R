@@ -1,0 +1,19 @@
+# SPDX-License-Identifier: GPL-2.0
+ARG BASE_IMAGE
+FROM $BASE_IMAGE as builder
+
+ARG RUNCMD
+
+# install devtools for build
+RUN apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y \
+    r-cran-devtools
+
+# other dependencies: bdsmatrix, CompQuadForm, coxme
+RUN Rscript -e 'devtools::install_github("DavisBrian/seqMeta")'
+
+FROM $BASE_IMAGE
+
+WORKDIR /app
+
+COPY --from=builder /usr/local/lib/R /usr/local/lib/R
