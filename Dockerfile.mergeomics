@@ -4,7 +4,8 @@ FROM $BASE_IMAGE as builder
 
 ARG RUNCMD
 
-RUN DEBIAN_FRONTEND=noninteractive \
+RUN apt-get update && \
+    DEBIAN_FRONTEND=noninteractive \
 	apt -y install git
 
 RUN git clone https://github.com/hihg-um/mergeomics.git
