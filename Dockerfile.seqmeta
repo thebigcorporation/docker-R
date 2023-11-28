@@ -6,8 +6,8 @@ ARG RUNCMD
 
 # install devtools for build
 RUN apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y \
-    r-cran-devtools
+	DEBIAN_FRONTEND=noninteractive apt-get install -y \
+	r-cran-devtools
 
 # other dependencies: bdsmatrix, CompQuadForm, coxme
 RUN Rscript -e 'devtools::install_github("DavisBrian/seqMeta")'
