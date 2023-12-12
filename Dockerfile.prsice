@@ -1,0 +1,31 @@
+ARG BASE_IMAGE
+FROM ubuntu:20.04 as builder
+
+ARG PRSICE_VER=2.3.5
+
+RUN apt -y update -qq && apt -y upgrade && \
+	DEBIAN_FRONTEND=noninteractive apt -y install \
+	g++ git \
+	libeigen3-dev \
+	libpthread-stubs0-dev \
+	zlib1g-dev
+
+RUN git clone --depth 1 --branch ${PRSICE_VER} https://github.com/choishingwan/PRSice.git && \
+	cd PRSice && \
+	g++ --std=c++17 -I inc/ -isystem lib/ -I /usr/include/eigen3/ -DNDEBUG -O3 -march=native src/*.cpp -lz -lpthread -o PRSice
+
+FROM $BASE_IMAGE
+
+ARG RUN_CMD=PRSice.R
+
+RUN apt -y update -qq && apt -y upgrade && \
+	DEBIAN_FRONTEND=noninteractive apt -y install \
+	r-cran-data.table r-cran-ggplot2 \
+	r-cran-optparse r-cran-rcolorbrewer
+
+COPY --from=builder /PRSice/PRSice /usr/local/bin/PRSice
+COPY --from=builder /PRSice/PRSice.R /usr/local/bin/PRSice.R
+
+ARG ENTRY="/entrypoint.sh"
+RUN echo "#!/bin/bash\n$RUN_CMD \$@" > ${ENTRY} && chmod ugo+rx ${ENTRY}
+ENTRYPOINT [ "/entrypoint.sh" ]
