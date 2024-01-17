@@ -1,0 +1,32 @@
+# SPDX-License-Identifier: GPL-2.0
+ARG BASE_IMAGE
+FROM $BASE_IMAGE
+
+# install GMMAT dependencies from pre-packaged ubuntu binaries
+RUN apt -y update -qq && apt -y upgrade && \
+	DEBIAN_FRONTEND=noninteractive apt -y install \
+	# for GMMAT
+	r-cran-biocmanager \
+	r-cran-devtools \
+	r-cran-data.table \
+	r-cran-domc \
+	r-cran-foreach \
+	r-cran-matrix \
+	r-cran-rcpparmadillo \
+	r-cran-testthat \
+	## for SeqArray & SeqVarTools
+	r-bioc-biobase \
+	r-bioc-biocgenerics \
+	r-bioc-biocparallel \
+	r-bioc-biostrings \
+	r-bioc-iranges \
+	r-bioc-genomeinfodb \
+	r-bioc-genomicranges \
+	r-bioc-s4vectors
+
+# install dependencies unavailable from ubuntu
+RUN Rscript -e 'install.packages("CompQuadForm")' && \
+	Rscript -e 'BiocManager::install(c("SeqArray", "SeqVarTools"))'
+
+# install GMMAT
+RUN Rscript -e 'devtools::install_github("hanchenphd/GMMAT")'
