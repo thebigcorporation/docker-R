@@ -2,8 +2,6 @@
 ARG BASE_IMAGE
 FROM $BASE_IMAGE as builder
 
-ARG RUNCMD
-
 # install all possible R dependencies from pre-packaged ubuntu binaries
 # - much faster install than 'install.packages()' inside R
 RUN apt-get update && \
@@ -74,8 +72,7 @@ RUN apt-get update && \
 	r-cran-optparse \
 	r-cran-rcppparallel
 
-COPY --from=builder /SAIGE/extdata/*.R /usr/local/bin/
-RUN chmod ug+x /usr/local/bin/*.R
+COPY --chmod=0555 --from=builder /SAIGE/extdata/*.R /usr/local/bin/
 
 COPY --from=builder /usr/local/lib/R /usr/local/lib/R
 
