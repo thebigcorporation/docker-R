@@ -120,6 +120,7 @@ apptainer_clean:
 			rm -f $$f; \
 		fi \
 	done
+	@apptainer cache clean
 
 apptainer_distclean:
 	@rm -f *.sif
