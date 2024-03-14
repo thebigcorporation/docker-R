@@ -7,7 +7,7 @@ FROM ubuntu:22.04 as base
 # builder only dependencies
 RUN apt -y update -qq && apt -y upgrade && DEBIAN_FRONTEND=noninteractive \
 	apt -y install --no-install-recommends \
-  make r-base r-base-dev \
+	make r-base r-base-dev \
 	&& rm -rf /var/lib/apt/lists/* \
 	&& rm -rf /tmp/*
 #	------------------------------------------------------------------------------
