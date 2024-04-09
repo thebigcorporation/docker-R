@@ -20,13 +20,28 @@ FROM base as builder
 RUN apt -y update -qq && apt -y upgrade && DEBIAN_FRONTEND=noninteractive \
 	apt -y install --no-install-recommends \
 	libdeflate-dev libzstd-dev liblzma-dev r-cran-remotes \
-	&& rm -rf /var/lib/apt/lists/* \
-	&& rm -rf /tmp/*
+	r-cran-biocmanager \
+	r-cran-devtools \
+	r-cran-data.table \
+	r-cran-domc \
+	r-cran-foreach \
+	r-cran-matrix \
+	r-cran-rcpparmadillo \
+	r-cran-testthat \
+	r-bioc-biobase \
+	r-bioc-biocgenerics \
+	r-bioc-biocparallel \
+	r-bioc-biostrings \
+	r-bioc-iranges \
+	r-bioc-genomeinfodb \
+	r-bioc-genomicranges \
+	r-bioc-s4vectors && \
+	rm -rf /var/lib/apt/lists/* && rm -rf /tmp/*
 
-RUN Rscript -e 'install.packages("CompQuadForm")'
 
 # install GMMAT
-RUN Rscript -e 'remotes::install_github("hanchenphd/GMMAT", dependencies=FALSE)'
+RUN Rscript -e 'install.packages("CompQuadForm")' && \
+    Rscript -e 'remotes::install_github("hihg-um/GMMAT", dependencies=FALSE)'
 # ------------------------------------------------------------------------------
 # RUNTIME LAYER
 FROM base as runtime
