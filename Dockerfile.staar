@@ -1,0 +1,99 @@
+# SPDX-License-Identifier: GPL-2.0
+ARG BASE_IMAGE
+# ------------------------------------------------------------------------------
+# BUILDER LAYER
+FROM ${BASE_IMAGE} as builder
+
+RUN apt -y update -qq && apt -y upgrade && DEBIAN_FRONTEND=noninteractive \
+	apt -y install \
+	autoconf automake build-essential gcc git gfortran \
+	libboost-all-dev libeigen3-dev liblapack-dev libblas-dev libbz2-dev \
+	libdeflate-dev liblzma-dev libuv1-dev libzstd-dev zlib1g-dev \
+	make pkg-config \
+	r-cran-devtools r-cran-foreach r-cran-knitr r-cran-matrix 
+
+	# For Genesis
+RUN apt -y install  \
+	r-cran-bit r-cran-bit64 r-cran-bitops r-cran-blob \
+	r-cran-boot r-cran-brio \
+	r-cran-dbi \
+	r-cran-fansi r-cran-forcats r-cran-futile.logger \
+	r-cran-generics r-cran-glmnet r-cran-haven \
+	r-cran-igraph r-cran-jomo \
+	r-cran-lifecycle r-cran-lmtest \
+	r-cran-matrixmodels r-cran-minqa r-cran-mitml r-cran-mgcv \
+	r-cran-nloptr r-cran-nnet r-cran-numderiv \
+	r-cran-ordinal \
+	r-cran-pan r-cran-pillar r-cran-plogr r-cran-progress \
+	r-cran-purrr \
+	r-cran-rcurl r-cran-readr r-cran-rlang r-cran-rpart r-cran-rsqlite \
+	r-cran-quantreg r-cran-rsqlite \
+	r-cran-sandwich r-cran-shape r-cran-sparsem \
+	r-cran-stringr r-cran-survival \
+	r-cran-testthat r-cran-tibble r-cran-tidyr r-cran-tzdb \
+	r-cran-ucminf \
+	r-cran-vctrs r-cran-vroom \
+	r-cran-zoo \
+	r-cran-biocmanager r-bioc-biocversion r-bioc-biobase \
+	r-bioc-biocparallel r-bioc-biostrings r-bioc-dnacopy \
+	r-bioc-genomeinfodbdata r-bioc-genomeinfodb r-bioc-genomicranges \
+	r-bioc-iranges r-bioc-s4vectors r-bioc-snpstats	r-bioc-xvector \
+	r-bioc-zlibbioc
+
+WORKDIR /usr/src
+RUN Rscript -e 'devtools::install_github("cran/backports")' && \
+	Rscript -e 'devtools::install_github("cran/withr")' && \
+	Rscript -e 'devtools::install_github("cran/fansi")' && \
+	Rscript -e 'devtools::install_github("cran/stringi")' && \
+	Rscript -e 'devtools::install_github("cran/tidyselect")' && \
+	Rscript -e 'devtools::install_github("cran/broom")' && \
+	Rscript -e 'devtools::install_github("cran/processx")' && \
+	Rscript -e 'devtools::install_github("cran/callr")' && \
+	Rscript -e 'devtools::install_github("cran/data.table")' && \
+	Rscript -e 'devtools::install_github("cran/cli")' && \
+	Rscript -e 'devtools::install_github("cran/formula.tools")' && \
+	Rscript -e 'devtools::install_github("cran/lme4")' && \
+	Rscript -e 'devtools::install_github("cran/logistf")' && \
+	Rscript -e 'devtools::install_github("cran/dplyr")' && \
+	Rscript -e 'devtools::install_github("cran/mice")' && \
+	Rscript -e 'devtools::install_github("cran/operator.tools")' && \
+	Rscript -e 'devtools::install_github("cran/pkgbuild")' && \
+	Rscript -e 'devtools::install_github("cran/GWASExactHW")' && \
+	Rscript -e 'devtools::install_github("smgogarten/SeqVarTools")' && \
+	Rscript -e 'devtools::install_github("smgogarten/SeqArray")' && \
+	Rscript -e 'devtools::install_github("smgogarten/GWASTools")' && \
+	Rscript -e 'devtools::install_github("smgogarten/SNPRelate")'
+RUN Rscript -e 'BiocManager::install(c("gdsfmt", "quantsmooth", "SNPRelate"))' && \
+	Rscript -e 'BiocManager::install("GENESIS")'
+RUN	Rscript -e 'devtools::install_github("hihg-um/GMMAT")'
+RUN Rscript -e 'devtools::install_github("xihaoli/STAAR")'
+RUN Rscript -e 'devtools::install_github("xihaoli/MultiSTAAR")'
+RUN Rscript -e 'devtools::install_github("xihaoli/MetaSTAAR")'
+RUN rm -rf /tmp/Rtmp*
+
+# ------------------------------------------------------------------------------
+# RUNTIME LAYER
+FROM ${BASE_IMAGE}
+ARG RUN_CMD
+
+RUN apt -y update -qq && apt -y upgrade && DEBIAN_FRONTEND=noninteractive \
+	apt -y install --no-install-recommends --no-install-suggests \
+	gfortran \
+	libboost-filesystem1.74.0 \
+	liblapack3 libblas3 libbz2-1.0 libdeflate0 liblzma5 \
+	libuv1 libzstd1 zlib1g \
+	r-cran-blob r-cran-dbi r-cran-dplyr r-cran-foreach r-cran-glmnet \
+	r-cran-knitr r-cran-lmtest \
+	r-cran-memoise r-cran-mitml \
+	r-cran-purrr \
+	r-cran-rcpp r-cran-rcppeigen r-cran-sandwich r-cran-tidyr \
+	r-cran-biocmanager r-bioc-biocversion r-bioc-biobase \
+	r-bioc-biocparallel r-bioc-biostrings r-bioc-dnacopy \
+	r-bioc-genomeinfodbdata r-bioc-genomeinfodb r-bioc-genomicranges \
+	r-bioc-iranges r-bioc-s4vectors r-bioc-snpstats r-bioc-xvector
+
+COPY --chmod=0555 --from=builder /usr/local/lib/R/ /usr/local/lib/R/
+
+ARG TEST="/test.sh"
+COPY --chmod=0555 src/test/$RUN_CMD.sh ${TEST}
+# ------------------------------------------------------------------------------
