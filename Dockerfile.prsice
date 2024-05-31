@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0
-ARG BASE_IMAGE
+ARG BASE
 # ------------------------------------------------------------------------------
 # BUILDER LAYER
-FROM $BASE_IMAGE as builder
+FROM $BASE as builder
 
 # builder only dependencies
 # PRSice currently only compiles on Ubuntu<20.04
@@ -21,7 +21,7 @@ RUN git clone --depth 1 https://github.com/choishingwan/PRSice.git && \
 	make
 # ------------------------------------------------------------------------------
 # RUNTIME LAYER
-FROM $BASE_IMAGE as runtime
+FROM $BASE
 ARG RUN_CMD
 
 # runtime only dependencies
