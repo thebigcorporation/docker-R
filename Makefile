@@ -6,7 +6,8 @@ OS_VER ?= 24.04
 
 IMAGE_REPOSITORY ?=
 
-TOOLS := genesis gmmat prosper prsice saige seqmeta
+#TOOLS := genesis gmmat prosper prsice saige seqmeta
+TOOLS := genesis prosper prsice saige seqmeta
 
 GIT_TAG = $(shell git describe --tags --exact-match)
 GIT_REV = $(shell git describe --broken --dirty --all --long | \
@@ -24,12 +25,13 @@ DOCKER_TAG ?= $(GIT_REV)_$(DOCKER_ARCH)
 
 DOCKER_BASE= $(ORG_NAME)/$(GIT_REPO_TAIL)/$(DOCKER_TAG)
 DOCKER_IMAGES := $(TOOLS:=\:$(DOCKER_TAG))
+DOCKER_IMAGES_TEST = $(DOCKER_IMAGES)
 SIF_IMAGES := $(TOOLS:=_$(DOCKER_TAG).sif)
 
 IMAGE_TEST := /test.sh
 
 .PHONY: apptainer_clean apptainer_distclean apptainer_test \
-	docker_base docker_clean docker_test docker_release $(TOOLS)
+	docker_base docker_clean docker_release $(TOOLS)
 
 help:
 	@echo "Targets: all build clean test release"
@@ -76,8 +78,6 @@ $(TOOLS):
 	$(if $(GIT_SYNC),, \
 		docker tag $(ORG_NAME)/$@:$(DOCKER_TAG) $(ORG_NAME)/$@:latest)
 
-$(DOCKER_IMAGES): $(TOOLS)
-
 docker_base:
 	@echo "Building Docker base: $(DOCKER_BASE)"
 	@docker build -t $(DOCKER_BASE) \
@@ -97,16 +97,17 @@ docker_clean:
 	done
 	@docker rmi -f $(DOCKER_BASE) 1> /dev/null 2>& 1
 
-docker_test:
-	@for f in $(DOCKER_IMAGES); do \
-		echo; echo "Testing Docker container: $(ORG_NAME)/$$f"; \
-		docker run -t \
-			-v /etc/passwd:/etc/passwd:ro \
-			-v /etc/group:/etc/group:ro \
-			--entrypoint=$(IMAGE_TEST) \
-			--user=$(shell echo `id -u`):$(shell echo `id -g`) \
-			$(ORG_NAME)/$$f; \
-	done
+$(DOCKER_IMAGES_TEST):
+	@echo
+	@echo "Testing Docker container: $(ORG_NAME)/$@"
+	@docker run -t \
+		-v /etc/passwd:/etc/passwd:ro \
+		-v /etc/group:/etc/group:ro \
+		--entrypoint=$(IMAGE_TEST) \
+		--user=$(shell echo `id -u`):$(shell echo `id -g`) \
+		$(ORG_NAME)/$@
+
+docker_test: $(DOCKER_IMAGES_TEST)
 
 docker_release:
 	@for f in $(GIT_REPO_TAIL):$(DOCKER_TAG) $(DOCKER_IMAGES); do \
