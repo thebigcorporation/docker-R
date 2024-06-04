@@ -7,7 +7,7 @@ ARG RUN_CMD
 
 # runtime dependencies
 RUN apt -y update -qq && apt -y upgrade && DEBIAN_FRONTEND=noninteractive \
-	apt -y install --no-install-recommends \
+	apt -y install --no-install-recommends --no-install-suggests \
 	r-cran-data.table r-cran-formatr r-cran-futile.logger \
 	r-cran-futile.options r-cran-genetics r-cran-glmnet \
 	r-cran-igraph r-cran-jomo r-cran-lambda.r \

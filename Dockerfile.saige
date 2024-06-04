@@ -6,7 +6,7 @@ FROM $BASE as base
 
 # shared builder and runtime dependencies
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive \
-	apt-get install -y --no-install-recommends \
+	apt-get install -y --no-install-recommends --no-install-suggests \
 	r-cran-data.table r-cran-lattice r-cran-matrix \
 	r-cran-optparse r-cran-rcpp r-cran-rcppparallel \
 	r-cran-rhpcblasctl \
@@ -18,7 +18,7 @@ FROM base as builder
 
 # builder only dependencies
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive \
-	apt-get install -y --no-install-recommends \
+	apt-get install -y --no-install-recommends --no-install-suggests \
 	cmake git g++ \
 	liblzma-dev libsavvy-dev libshrinkwrap-dev \
 	libsuperlu-dev libzstd-dev zlib1g-dev \
@@ -52,7 +52,7 @@ ENV OMP_NUM_THREADS=1
 
 # runtime only dependencies
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive \
-	apt-get install -y --no-install-recommends \
+	apt-get install -y --no-install-recommends --no-install-suggests \
 	libsuperlu6 \
 	&& rm -rf /var/lib/apt/lists/* \
 	&& rm -rf /tmp/*

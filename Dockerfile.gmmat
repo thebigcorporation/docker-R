@@ -6,7 +6,7 @@ FROM $BASE as base
 
 # shared builder and runtime dependencies
 RUN apt -y update -qq && apt -y upgrade && DEBIAN_FRONTEND=noninteractive \
-	apt -y install --no-install-recommends \
+	apt -y install --no-install-recommends --no-install-suggests \
 	r-cran-codetools r-cran-data.table r-cran-foreach \
 	r-cran-iterators r-cran-lattice r-cran-matrix \
 	r-cran-rcpp r-cran-rcpparmadillo \
@@ -18,7 +18,7 @@ FROM base as builder
 
 # builder only dependencies
 RUN apt -y update -qq && apt -y upgrade && DEBIAN_FRONTEND=noninteractive \
-	apt -y install --no-install-recommends \
+	apt -y install --no-install-recommends --no-install-suggests \
 	libdeflate-dev libzstd-dev liblzma-dev r-cran-remotes \
 	r-cran-biocmanager \
 	r-cran-devtools \
