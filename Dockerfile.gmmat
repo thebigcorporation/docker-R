@@ -9,23 +9,58 @@ RUN apt -y update -qq && apt -y upgrade && \
 	DEBIAN_FRONTEND=noninteractive apt -y install \
 	--no-install-recommends --no-install-suggests \
 		libdeflate0 \
+		libeigen3-dev \
 		liblzma5 \
 		libzstd1 \
+		zlib1g \
+		g++ \
+		make \
+		xzip \
+		r-cran-backports \
+		r-cran-bit \
+		r-cran-bit64 \
+		r-cran-broom \
+		r-cran-crayon \
 		r-cran-data.table \
+		r-cran-dplyr \
+		r-cran-forcats \
 		r-cran-foreach \
+		r-cran-generics \
+		r-cran-generics \
+		r-cran-glmnet \
+		r-cran-haven \
+		r-cran-hms \
 		r-cran-iterators \
+		r-cran-mice \
+		r-cran-jomo \
 		r-cran-lattice \
+		r-cran-lme4 \
 		r-cran-matrix \
-		r-cran-rcpp \
-		r-cran-rcpparmadillo \
+		r-cran-minqa \
+		r-cran-mitml \
+		r-cran-nloptr \
+		r-cran-numderiv \
+		r-cran-ordinal \
+		r-cran-pan \
+		r-cran-progress \
+		r-cran-readr \
+		r-cran-shape \
+		r-cran-stringi \
+		r-cran-stringr \
+		r-cran-tidyr \
+		r-cran-ucminf \
+		r-cran-vroom \
+		r-cran-tzdb \
 		r-bioc-biobase \
 		r-bioc-biocgenerics \
 		r-bioc-biocparallel \
+		r-bioc-biocversion \
 		r-bioc-biostrings \
 		r-bioc-iranges \
 		r-bioc-genomeinfodb \
 		r-bioc-genomicranges \
 		r-bioc-s4vectors \
+		r-bioc-zlibbioc \
 	&& \
 	apt -y clean && rm -rf /var/lib/apt/lists/* /tmp/*
 # ------------------------------------------------------------------------------
@@ -38,18 +73,30 @@ RUN apt -y update -qq && DEBIAN_FRONTEND=noninteractive apt -y install \
 		libdeflate-dev \
 		liblzma-dev \
 		libzstd-dev \
+		zlib1g-dev \
+		cmake \
 		r-cran-codetools \
-		r-cran-devtools \
 		r-cran-domc \
+		r-cran-rcpp \
+		r-cran-rcpparmadillo \
+		r-cran-rcppeigen \
 		r-cran-remotes \
 		r-cran-testthat \
+		r-cran-biocmanager \
 	&& \
 	apt -y clean && rm -rf /var/lib/apt/lists/* /tmp/*
 
 # install GMMAT
-RUN 	Rscript -e 'install.packages("CompQuadForm")' && \
-	Rscript -e 'remotes::install_github("smgogarten/SeqVarTools")' && \
-	Rscript -e 'remotes::install_github("smgogarten/SeqArray")' && \
+RUN \
+	Rscript -e 'install.packages(c("CompQuadForm"))' && \
+	Rscript -e 'install.packages(c("operator.tools"))' && \
+	Rscript -e 'install.packages(c("formula.tools"))' && \
+	Rscript -e 'install.packages(c("logistf"))' && \
+	Rscript -e 'install.packages(c("purr"))' && \
+	Rscript -e 'BiocManager::install(c("gdsfmt"))' && \
+	Rscript -e 'BiocManager::install(c("GWASExactHW"))' && \
+	Rscript -e 'BiocManager::install(c("SeqArray"))' && \
+	Rscript -e 'BiocManager::install(c("SeqVarTools"))' && \
 	Rscript -e 'remotes::install_github("hihg-um/GMMAT")'
 
 # ------------------------------------------------------------------------------
