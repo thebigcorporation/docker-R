@@ -12,7 +12,7 @@ ARG BUILD_REPO
 
 ENV TZ="UTC"
 ENV LANG="en_US.UTF-8"
-ENV LC_ALL="en_US.UTF-8"
+ENV LC_ALL=C
 
 RUN apt -y update -qq && apt -y upgrade && DEBIAN_FRONTEND=noninteractive \
 	apt -y install --no-install-recommends --no-install-suggests \
